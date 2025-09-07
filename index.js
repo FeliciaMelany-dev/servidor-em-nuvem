@@ -11,8 +11,8 @@ app.use(express.json())
 
 let users = [];
 
-app.get('/users',(req,res) => {
-    res.json(users);
+app.get('/',(req,res) => {
+    res.json({mensagem:"servidor rodando no render"});
     
 })
 app.get('/users/:id', (req,res) =>{
