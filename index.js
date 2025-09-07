@@ -2,10 +2,10 @@ import express from "express";
 import { v4 as uuidv4 } from "uuid";
 import dotevn from "dotevn";
 
-dotevn();
+dotevn.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ||3000;
 
 app.use(express.json())
 
@@ -80,5 +80,5 @@ app.delete('/users/:id', (req,res) =>{
 })
 
 app.listen(PORT, () => {
-    console.log("Servidor rodando na porta 3000")
+    console.log(`Servidor rodando na porta ${PORT}`)
 })
