@@ -13,7 +13,12 @@ app.get('/users',(req,res) => {
     
 })
 app.get('/users/:id', (req,res) =>{
-    res.json(users);
+    const listaUser = req.params.id;
+    const listausers = users.find(u => u.id === listaUser)
+    if(!listausers){
+        return res.status(404).json({menssagem:'Usuário não encontrado'})
+    }
+    res.json(listausers);
 })
 app.post('/users', (req,res) => {
     const id = uuidv4()
@@ -28,32 +33,47 @@ app.post('/users', (req,res) => {
 })
 app.put('/users/:id', (req,res) =>{
     const usersUp = req.params.id;
-    const findUsers = users.find( u => u.id === usersUp)
-    if(!findUsers){
+    const findUsers = users.findIndex( u => u.id === usersUp);
+    if(findUsers === -1){
         return res.status(404)
 
     }
-    res.status(201).json({messagem: 'Atualizado com sucesso'});
+    const usersUpDois = {
+       ...users[findUsers],
+       user: req.body.email || users[findUsers].user,
+       password: req.body.password || users[findUsers].password
+    }
+
+    users.splice(findUsers, 1, usersUpDois);
+    res.status(200).json({mensagem: 'Atualizado com sucesso', user: usersUpDois});
     
     
 })
 app.patch('/users/:id', (req,res) => {
     const userId = req.params.id
-    const findId = users.find( u => u.id === userId)
-    if(!findId) {
-        return res.status(404).json
+    const findId = users.findIndex( u => u.id === userId);
+    if(findId === -1) {
+        return res.status(404).json({mensagem:'Usuário não encontrado'})
     }
-    return res.status(201).json({mensagem: 'Usuário atualizado'})
+    const usersUpPatch = {
+       ...users[findId],
+       user: req.body.email || users[findId].user,
+       password: req.body.password || users[findId].password
+    }
+    users.splice(findId, 1, usersUpPatch)
+    return res.status(200).json({mensagem: 'Usuário atualizado', user: usersUpPatch})
 })
 
 app.delete('/users/:id', (req,res) =>{
     const usersId = req.params.id;
-    const findusers = users.find( u => u.id === usersId)
-    if(usersId){
-        users.splice(usersId, 1);
-        return res.status(200).json ({messagem:'Usuário apagado'})
+    const findusers = users.findIndex( u => u.id === usersId)
+
+    if(findusers === -1){
+        return res.status(404).json({mensagem:'Usuário não encontrado'})
     }
-    return res.status(404).json({menssagem:'Usuário não encontrado'})
+     users.splice(findusers, 1);
+        return res.status(200).json ({mensagem:'Usuário apagado'})
+    
 })
 
 app.listen(PORT, () => {
